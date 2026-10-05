@@ -1,0 +1,375 @@
+import 'package:flutter/material.dart';
+
+void main() => runApp(const ResponsiveApp());
+
+class ResponsiveApp extends StatelessWidget {
+  const ResponsiveApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Responsive UI Lab',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const DashboardPage(),
+    );
+  }
+}
+
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Requirement 5: OrientationBuilder
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        // Requirement 1: MediaQuery
+        final width = MediaQuery.of(context).size.width;
+        final height = MediaQuery.of(context).size.height;
+
+        // Requirement 2: Breakpoints
+        String type;
+        int cols;
+        bool isDesktop;
+        if (width < 600) {
+          type = "Mobile";
+          cols = 1;
+          isDesktop = false;
+        } else if (width < 1024) {
+          type = "Tablet";
+          cols = 2;
+          isDesktop = false;
+        } else {
+          type = "Desktop";
+          cols = 3;
+          isDesktop = true;
+        }
+
+        String orientStr = orientation == Orientation.portrait ? "Portrait" : "Landscape";
+
+        return Scaffold(
+          appBar: AppBar(title: const Text("Responsive Dashboard")),
+          drawer: !isDesktop ? const AppDrawer() : null,
+          body: Row(
+            children: [
+              if (isDesktop)
+                const NavigationRail(
+                  extended: true,
+                  selectedIndex: 0,
+                  destinations: [
+                    NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text("Dashboard")),
+                    NavigationRailDestination(icon: Icon(Icons.bar_chart), label: Text("Analytics")),
+                    NavigationRailDestination(icon: Icon(Icons.settings), label: Text("Settings")),
+                  ],
+                ),
+              Expanded(
+                child: Column(
+                  children: [
+                    // HEADER - Requirement (a) MediaQuery, Flexible, Expanded
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      color: Colors.indigo.shade50,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.widgets, size: 30),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Header Area", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("$type $orientStr - ${width.toInt()}px", style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Chip(label: Text(type), backgroundColor: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.amber.shade100,
+                      padding: const EdgeInsets.all(8),
+                      child: Text("Active Layout: $cols Column | $type $orientStr | ${width.toInt()}x${height.toInt()}",
+                          textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+
+                    // CONTENT - Requirement 4: LayoutBuilder
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // On mobile portrait, force 1 column
+                          int effectiveCols = cols;
+                          if (type == "Mobile" && orientation == Orientation.portrait) effectiveCols = 1;
+                          
+                          return GridView.builder(
+                            padding: const EdgeInsets.all(16),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: effectiveCols,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                              childAspectRatio: 1.6,
+                            ),
+                            itemCount: 6,
+                            itemBuilder: (context, i) => ContentCard(index: i + 1),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // FOOTER
+                    Container(
+                      height: 50,
+                      color: Colors.black87,
+                      child: Center(child: Text("Footer | Width: ${width.toInt()}px", style: const TextStyle(color: Colors.white))),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ContentCard extends StatelessWidget {
+  final int index;
+  const ContentCard({super.key, required this.index});
+  @override
+  Widget build(BuildContext context) {
+    // Requirement 4: Inner LayoutBuilder
+    return LayoutBuilder(
+      builder: (context, c) {
+        bool compact = c.maxWidth < 200;
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.dashboard_customize, size: compact ? 20 : 30),
+                Text("Card $index", style: TextStyle(fontSize: compact ? 14 : 18, fontWeight: FontWeight.bold)),
+                Text("MaxW: ${c.maxWidth.toInt()}px", style: const TextStyle(fontSize: 11)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Drawer(child: Column(children: [DrawerHeader(child: Text("Drawer for Mobile/Tablet\nRail for Desktop")), ListTile(title: Text("Dashboard"))]));
+  }
+}
+Here is the complete *Code + Output* for your lab record.
+
+### 1. The Code - `lib/main.dart`
+
+Copy-paste this full file. It satisfies all points in your screenshot:
+import 'package:flutter/material.dart';
+
+void main() => runApp(const ResponsiveApp());
+
+class ResponsiveApp extends StatelessWidget {
+  const ResponsiveApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Responsive UI Lab',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.indigo),
+      home: const DashboardPage(),
+    );
+  }
+}
+
+class DashboardPage extends StatelessWidget {
+  const DashboardPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    // Requirement 5: OrientationBuilder
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        // Requirement 1: MediaQuery
+        final width = MediaQuery.of(context).size.width;
+        final height = MediaQuery.of(context).size.height;
+
+        // Requirement 2: Breakpoints
+        String type;
+        int cols;
+        bool isDesktop;
+        if (width < 600) {
+          type = "Mobile";
+          cols = 1;
+          isDesktop = false;
+        } else if (width < 1024) {
+          type = "Tablet";
+          cols = 2;
+          isDesktop = false;
+        } else {
+          type = "Desktop";
+          cols = 3;
+          isDesktop = true;
+        }
+
+        String orientStr = orientation == Orientation.portrait ? "Portrait" : "Landscape";
+
+        return Scaffold(
+          appBar: AppBar(title: const Text("Responsive Dashboard")),
+          drawer: !isDesktop ? const AppDrawer() : null,
+          body: Row(
+            children: [
+              if (isDesktop)
+                const NavigationRail(
+                  extended: true,
+                  selectedIndex: 0,
+                  destinations: [
+                    NavigationRailDestination(icon: Icon(Icons.dashboard), label: Text("Dashboard")),
+                    NavigationRailDestination(icon: Icon(Icons.bar_chart), label: Text("Analytics")),
+                    NavigationRailDestination(icon: Icon(Icons.settings), label: Text("Settings")),
+                  ],
+                ),
+              Expanded(
+                child: Column(
+                  children: [
+                    // HEADER - Requirement (a) MediaQuery, Flexible, Expanded
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      color: Colors.indigo.shade50,
+                      child: Row(
+                        children: [
+                          const Icon(Icons.widgets, size: 30),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 3,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text("Header Area", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("$type $orientStr - ${width.toInt()}px", style: const TextStyle(fontSize: 12)),
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                            flex: 2,
+                            child: Chip(label: Text(type), backgroundColor: Colors.white),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      color: Colors.amber.shade100,
+                      padding: const EdgeInsets.all(8),
+                      child: Text("Active Layout: $cols Column | $type $orientStr | ${width.toInt()}x${height.toInt()}",
+                          textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+
+                    // CONTENT - Requirement 4: LayoutBuilder
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          // On mobile portrait, force 1 column
+                          int effectiveCols = cols;
+                          if (type == "Mobile" && orientation == Orientation.portrait) effectiveCols = 1;
+                          
+                          return GridView.builder(
+                            padding: const EdgeInsets.all(16),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: effectiveCols,
+                              crossAxisSpacing: 16,
+                              mainAxisSpacing: 16,
+                              childAspectRatio: 1.6,
+                            ),
+                            itemCount: 6,
+                            itemBuilder: (context, i) => ContentCard(index: i + 1),
+                          );
+                        },
+                      ),
+                    ),
+
+                    // FOOTER
+                    Container(
+                      height: 50,
+                      color: Colors.black87,
+                      child: Center(child: Text("Footer | Width: ${width.toInt()}px", style: const TextStyle(color: Colors.white))),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class ContentCard extends StatelessWidget {
+  final int index;
+  const ContentCard({super.key, required this.index});
+  @override
+  Widget build(BuildContext context) {
+    // Requirement 4: Inner LayoutBuilder
+    return LayoutBuilder(
+      builder: (context, c) {
+        bool compact = c.maxWidth < 200;
+        return Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.dashboard_customize, size: compact ? 20 : 30),
+                Text("Card $index", style: TextStyle(fontSize: compact ? 14 : 18, fontWeight: FontWeight.bold)),
+                Text("MaxW: ${c.maxWidth.toInt()}px", style: const TextStyle(fontSize: 11)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AppDrawer extends StatelessWidget {
+  const AppDrawer({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Drawer(child: Column(children: [DrawerHeader(child: Text("Drawer for Mobile/Tablet\nRail for Desktop")), ListTile(title: Text("Dashboard"))]));
+  }
+}
+2. Output
+
+This is what you will get when you run `flutter run -d chrome` and resize:
+
+*a) Mobile (< 600px) - Single Column Stacked*
+Header, content cards, and footer appear one below another. In Portrait, it forces column layout.
+*b) Tablet (600 ≤ width < 1024) - Two-Column Layout*
+Content area uses 2 cards side-by-side. Uses a Hamburger Drawer.
+
+> Visual: 2-column grid, chip shows "Tablet Landscape", banner shows "Active Layout: 2 Column"
+
+*c) Desktop (width ≥ 1024) - Three-Column + Side Navigation Rail*
+Shows extended `NavigationRail` on left instead of drawer. Content uses 3 cards per row.
+
+> Visual: Left rail with Dashboard/Analytics/Settings, 3-column grid, chip shows "Desktop"
+
+*Orientation Handling:*
+Rotate phone / emulator (Ctrl + Left/Right Arrow in emulator). The `OrientationBuilder` rebuilds and label changes from `Mobile Portrait` to `Mobile Landscape`.
+
+Want me to also generate the tablet and desktop screenshots for your lab file?
